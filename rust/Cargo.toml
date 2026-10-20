@@ -1,0 +1,31 @@
+[package]
+name = "repro"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[[bin]]
+name = "uniffi-bindgen"
+path = "uniffi-bindgen.rs"
+required-features = ["cli"]
+
+# uniffi-rs main @ c31f4bc025c7a31eae56b49107f50e6d38e76bc7 (2026-10-16): uniffi_parse_rs + uniffi-bindgen-kotlin-jni.
+[dependencies]
+uniffi = { git = "https://github.com/mozilla/uniffi-rs", rev = "c31f4bc025c7a31eae56b49107f50e6d38e76bc7", default-features = false }
+# Default: the UNPATCHED upstream JNI runtime.
+uniffi-bindgen-kotlin-jni-runtime = { git = "https://github.com/mozilla/uniffi-rs", rev = "c31f4bc025c7a31eae56b49107f50e6d38e76bc7", optional = true }
+# Feature `patched`: same runtime with the app-class-loader fix (see ../vendor). Aliased in src/lib.rs.
+runtime-patched = { package = "uniffi-bindgen-kotlin-jni-runtime", path = "../vendor/uniffi-bindgen-kotlin-jni-runtime-patched", optional = true }
+uniffi-bindgen-kotlin-jni = { git = "https://github.com/mozilla/uniffi-rs", rev = "c31f4bc025c7a31eae56b49107f50e6d38e76bc7", optional = true }
+
+[build-dependencies]
+uniffi-bindgen-kotlin-jni = { git = "https://github.com/mozilla/uniffi-rs", rev = "c31f4bc025c7a31eae56b49107f50e6d38e76bc7" }
+
+[features]
+default = ["upstream"]
+upstream = ["dep:uniffi-bindgen-kotlin-jni-runtime"]
+patched = ["dep:runtime-patched"]
+cli = ["dep:uniffi-bindgen-kotlin-jni"]

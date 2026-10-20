@@ -1,0 +1,6 @@
+[bindings.kotlin]
+android = true
+cdylib_name = "repro"
+package_name = "uniffi.repro"
+# android.system.SystemCleaner needs API 33; use UniFFI's builtin cleaner so minSdk 28 works.
+disable_java_cleaner = true
